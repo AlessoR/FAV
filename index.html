@@ -15,6 +15,12 @@
             overflow: hidden;
             color: white;
             position: relative;
+            animation: bgAnimation 10s infinite alternate;
+        }
+
+        @keyframes bgAnimation {
+            0% { background: linear-gradient(to bottom, #ff99cc, #ff66b2); }
+            100% { background: linear-gradient(to bottom, #ff66b2, #ff3385); }
         }
 
         .container {
@@ -48,7 +54,6 @@
         .buttons {
             margin-top: 20px;
             position: relative;
-            height: 100px;
         }
 
         .btn {
@@ -82,9 +87,7 @@
         .no {
             background-color: #ccc;
             color: black;
-            position: absolute;
-            font-size: 18px;
-            transition: transform 0.3s, left 0.3s, top 0.3s;
+            transition: transform 0.3s, font-size 0.3s;
         }
 
         /* Animación de corazones flotantes */
@@ -93,17 +96,26 @@
             100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
 
-        .heart {
+        .heart, .flower {
             position: absolute;
+            animation: floating 5s linear infinite;
+        }
+
+        .heart {
             color: #ff4d6d;
             font-size: 30px;
-            animation: floating 5s linear infinite;
+        }
+
+        .flower {
+            color: #ffcc00;
+            font-size: 30px;
+            animation-duration: 6s;
         }
     </style>
 </head>
 <body>
 
-    <!-- Corazones flotantes -->
+    <!-- Corazones y flores flotantes -->
     <script>
         function createHeart() {
             const heart = document.createElement("div");
@@ -119,15 +131,30 @@
             }, 5000);
         }
 
+        function createFlower() {
+            const flower = document.createElement("div");
+            flower.innerHTML = "🌸";
+            flower.classList.add("flower");
+            flower.style.left = Math.random() * 100 + "vw";
+            flower.style.animationDuration = Math.random() * 3 + 2 + "s";
+            flower.style.fontSize = Math.random() * 20 + 20 + "px";
+            document.body.appendChild(flower);
+
+            setTimeout(() => {
+                flower.remove();
+            }, 5000);
+        }
+
         setInterval(createHeart, 500);
+        setInterval(createFlower, 800);
     </script>
 
     <div class="container">
         <h1>Ojitos lindos, ¿quieres ser mi San Valentín? ❤️</h1>
         <p>Ándale, sí, aunque estemos lejos, mi niña ❤️</p>
         <div class="buttons">
-            <button class="btn yes" onclick="aceptar()">¡Sí, obvio! ❤️</button>
-            <button class="btn no" id="noButton">No 😢</button>
+            <button class="btn yes" id="yesButton" onclick="aceptar()">¡Sí, obvio! ❤️</button>
+            <button class="btn no" id="noButton" onclick="dudar()">No 😢</button>
         </div>
     </div>
 
@@ -136,23 +163,30 @@
             alert("Aunque no estemos cerca, quiero que sepas que te amo ❤️.");
         }
 
-        // Función para que el botón "No" huya
-        let intentos = 0; 
-        document.getElementById("noButton").addEventListener("mouseover", function() {
+        // Función cuando intenta presionar "No"
+        let intentos = 0;
+        function dudar() {
             intentos++;
-            var x = Math.random() * (window.innerWidth - 100);
-            var y = Math.random() * (window.innerHeight - 100);
-
-            // Cada vez que intentan presionar "No", se mueve más rápido
-            this.style.position = "absolute";
-            this.style.left = x + "px";
-            this.style.top = y + "px";
-
-            // Después de muchos intentos, el botón desaparece
-            if (intentos > 7) {
-                this.style.display = "none";
+            if (intentos === 1) {
+                document.getElementById("noButton").innerText = "¿Segura? 🥺";
+            } else if (intentos === 2) {
+                document.getElementById("noButton").innerText = "Piensa bien 💔";
+            } else if (intentos === 3) {
+                document.getElementById("noButton").innerText = "No me hagas esto 😭";
+            } else if (intentos >= 4) {
+                document.getElementById("noButton").style.display = "none";
             }
-        });
+
+            // Hacer más grande el botón de "Sí" y más pequeño el de "No"
+            let yesButton = document.getElementById("yesButton");
+            let noButton = document.getElementById("noButton");
+
+            let currentYesSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+            let currentNoSize = parseFloat(window.getComputedStyle(noButton).fontSize);
+
+            yesButton.style.fontSize = (currentYesSize + 5) + "px";
+            noButton.style.fontSize = (currentNoSize - 3) + "px";
+        }
     </script>
 
 </body>
